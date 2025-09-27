@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Digital Candle</title>
+  <style>
+    :root{ --fern:#4F7942; --bg:transparent; --fg:#ffffff; }
+    html,body{height:100%;margin:0;background:var(--bg);
+      font-family:"Segoe UI",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    .wrap{display:flex;align-items:center;justify-content:center;padding:18px}
+    .card{
+      text-align:center;
+      border-radius:12px;
+      padding:12px 16px;
+      min-width:220px;
+      max-width:420px;
+      color:var(--fg);
+    }
+    .btn{
+      background:var(--fern);
+      color:white;
+      border:0;
+      padding:8px 14px;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:15px;
+      box-shadow:0 6px 14px rgba(0,0,0,0.18);
+    }
+    .btn.secondary{ background:rgba(255,255,255,0); border:1px solid rgba(255,255,255,0.06); margin-left:8px; }
+    .controls{ margin-top:10px; }
+    .flame{ max-width:90%; height:auto; display:block; margin:12px auto 4px; }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="application" aria-label="Digital Candle">
+    <div class="card" id="card">
+      <div id="status" class="status">I light these candles with good intentions</div>
+
+      <img id="flame" class="flame" src="" alt="Flickering candle flame" style="display:none" />
+
+      <div class="controls">
+        <button id="lightBtn" class="btn" aria-pressed="false">light the candles</button>
+        <button id="extBtn" class="btn secondary" style="display:none">extinguish</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    const STORAGE_KEY = "digitalCandleLit_v3";
+
+    // Flame image (replace with your own gif if you like)
+    const FLAME_URL = "https://media1.giphy.com/media/v1.Y2lkPTZjMDliOTUyanQ5ZXZmZWdmazR0cHIzNDZsZDU4bjdqOGZ6dWRpNmthZ2Y1ZWIwaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3liPzBhoQzKXm/giphy.gif";
+
+    // DOM
+    const flameEl = document.getElementById("flame");
+    const lightBtn = document.getElementById("lightBtn");
+    const extBtn = document.getElementById("extBtn");
+    const statusEl = document.getElementById("status");
+
+    flameEl.src = FLAME_URL;
+
+    function showLit(){
+      flameEl.style.display = "block";
+      lightBtn.style.display = "none";
+      extBtn.style.display = "inline-block";
+      statusEl.textContent = "may my day be blessed";
+    }
+
+    function showUnlit(){
+      flameEl.style.display = "none";
+      lightBtn.style.display = "inline-block";
+      extBtn.style.display = "none";
+      statusEl.textContent = "I light these candles with good intentions";
+    }
+
+    function light(){
+      localStorage.setItem(STORAGE_KEY, "true");
+      showLit();
+    }
+
+    function extinguish(){
+      localStorage.removeItem(STORAGE_KEY);
+      showUnlit();
+    }
+
+    function restore(){
+      if(localStorage.getItem(STORAGE_KEY) === "true"){
+        showLit();
+      } else {
+        showUnlit();
+      }
+    }
+
+    // run on load
+    restore();
+
+    // update again when page becomes visible
+    document.addEventListener("visibilitychange", () => {
+      if(document.visibilityState === "visible"){
+        restore();
+      }
+    });
+
+    // events
+    lightBtn.addEventListener("click", light);
+    extBtn.addEventListener("click", extinguish);
+  })();
+  </script>
+</body>
+</html>
